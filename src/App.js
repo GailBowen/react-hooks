@@ -1,28 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function App() {
 
-  const [bob, setBob] = useState(4);
+  const [resourceType, setResourceType] = useState('posts');
 
-  const [theme, setTheme] = useState('blue');
+  const [items, setItems] = useState([]);
 
-
-  function decrementCount() {
-    setBob(beforeVal => beforeVal - 1);
-    setTheme('red');
-  }
-
-  function augumentCount() {
-    setBob(beforeVal => beforeVal + 1);
-    setTheme('green');
-  }
+  useEffect(() => {
+    fetch(`https://jsonplaceholder.typicode.com/${resourceType}`)
+      .then(response => response.json())
+      .then(json => {
+          console.log(json);
+          setItems(json);
+          console.log('items: ', items);
+        }
+      );
+     
+  }, [resourceType , items])
 
   return (
    <>
-    <button onClick={decrementCount}>-</button>&nbsp;
-    <span>{bob}</span>&nbsp;
-    <span>{theme}</span>&nbsp;
-    <button onClick={augumentCount}>+</button>
+   <div>
+      <button onClick={() => setResourceType('posts')}>Posts</button>
+      <button onClick={() => setResourceType('users')}>Users</button>
+      <button onClick={() => setResourceType('comments')}>Comments</button>
+   </div>
+   
+    <h1>{resourceType}</h1>
+
+    {items.map(item => {
+      return <pre>{JSON.stringify(item)}</pre>})}
    </>
   );
 }
